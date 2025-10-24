@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Simple Weather App</title>
+   <style>
+       body {
+           font-family: Arial, sans-serif;
+           background: #e0f7fa;
+           text-align: center;
+           margin-top: 50px;
+       }
+
+
+       input {
+           padding: 10px;
+           border: 1px solid #ccc;
+           border-radius: 8px;
+       }
+
+
+       button {
+           padding: 10px 15px;
+           border: none;
+           background-color: #0288d1;
+           color: white;
+           border-radius: 8px;
+           cursor: pointer;
+       }
+
+
+       button:hover {
+           background-color: #0277bd;
+       }
+
+
+       #weatherResult {
+           margin-top: 30px;
+           font-size: 18px;
+       }
+   </style>
+</head>
+<body>
+   <h2>🌦 Simple Weather App</h2>
+   <p>Enter a city name to get the current weather:</p>
+
+
+   <!-- Input for the user to type the city name -->
+   <input type="text" id="cityInput" placeholder="Enter city name">
+  
+   <!-- When the button is clicked, the getWeather() function is called -->
+   <button onclick="getWeather()">Get Weather</button>
+
+
+   <!-- This div will display the weather information or error messages -->
+   <div id="weatherResult"></div>
+
+
+   <script>
+       // Async function to fetch weather data from OpenWeatherMap API
+       async function getWeather() {
+           const city = document.getElementById('cityInput').value; // Get city name from input field
+          
+           // Your unique API key from OpenWeatherMap
+           const apiKey = 'fbe46281a3d78b5b75f2112a74de57bb'; // <-- Replace this with your real API key
+          
+           // API Endpoint: RESTful GET request to OpenWeatherMap with query parameters for city name, API key, and units in metric. It is mandatory to include unit as metric to get temperature in Celsius.
+           const url = 'https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric';
+          
+           try {
+               // Send HTTP GET request using Fetch API
+               const response = await fetch(url);
+
+
+               // Handle error responses (like 404 or 401)
+               if (!response.ok) {
+                   throw new Error('City not found');
+               }
+
+
+               // Parse JSON response body into a JavaScript object
+               const data = await response.json();
+
+
+               // Display weather info from the response object
+               document.getElementById('weatherResult').innerHTML = `
+                   <h3>${data.name}, ${data.sys.country}</h3>
+                   <p>Temperature: ${data.main.temp} °C</p>
+                   <p>Weather: ${data.weather[0].main} (${data.weather[0].description})</p>
+                   <p>Humidity: ${data.main.humidity}%</p>
+                   <p>Wind Speed: ${data.wind.speed} m/s</p>
+               `;
+           } catch (error) {
+               // Display error if something goes wrong (e.g., network issue, wrong city name)
+               document.getElementById('weatherResult').innerHTML = `<p style="color:red;">${error.message}</p>`;
+           }
+       }
+   </script>
+</body>
+</html>
+
+
+
